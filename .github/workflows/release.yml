@@ -18,9 +18,24 @@ env:
 
 jobs:
   # ---------------------------------------------------------------------------
+  # Version consistency check
+  # ---------------------------------------------------------------------------
+  version-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Check version sync
+        run: python3 scripts/sync-version.py ${{ env.PROJECT_NAME }} --check
+
+  # ---------------------------------------------------------------------------
   # macOS — Ninja, Release
   # ---------------------------------------------------------------------------
   macos:
+    needs: version-check
     runs-on: macos-14
     timeout-minutes: 30
 
@@ -77,6 +92,7 @@ jobs:
   # Windows — Visual Studio 2022, Release
   # ---------------------------------------------------------------------------
   windows:
+    needs: version-check
     runs-on: windows-latest
     timeout-minutes: 30
 
